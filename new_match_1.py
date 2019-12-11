@@ -8,19 +8,17 @@ import h5py
 import numpy as np
 import os
 from math import sin, asin, cos, radians, fabs, sqrt
-#----------------------批量读取GIIRS数据，读出经纬度------------------------------------
+
 landindex=False #True:land False:sea
 def haversine(lon1, lat1, lon2, lat2):
-        # 经度1，纬度1，经度2，纬度2 （十进制度数）
-        # 将十进制度数转化为弧度
         lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
-        # haversine公式
         dlon = lon2 - lon1
         dlat = lat2 - lat1
         a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
         c = 2 * asin(sqrt(a))
-        r = 6371  # 地球平均半径，单位为公里
-        return c * r #输出单位为KM
+        r = 6371  
+        return c * r #unit:KM
+
 def count(digit,point_g):
         count = 0
         for item in point_g:
@@ -35,13 +33,12 @@ bb=['testdata1']
 DIR=[]
 for k in range(len(a)):
   for x in range(len(bb)):
-    DIR.append('D:/fydata/NMC/sea_train/{0}/testdata/{1}/'.format(a[k],bb[x]))
+    DIR.append('{0}/testdata/{1}/'.format(a[k],bb[x]))
 print(DIR)
 for k in range(len(a)):
   for x in range(len(bb)):
     mathe=2*k+x
     print('-------------mathe---------------',mathe)
-    #number=len([name for name in os.listdir(DIR[mathe]) if os.path.isfile(os.path.join(DIR[mathe], name))])
     number=len([name for name in os.listdir(DIR[mathe]) if name.endswith('.HDF')])
     i=-1
     count_file=0
@@ -80,8 +77,8 @@ for k in range(len(a)):
         
     #----------------------------------Read the latitude and longitude of AGRI data-------------------------------
     import scipy.io as sio
-    latx = 'D:/fydata/GEO/AGRI_lat.mat'
-    lonx= 'D:/fydata/GEO/AGRI_lon.mat'
+    latx = 'GEO/AGRI_lat.mat'
+    lonx= 'GEO/AGRI_lon.mat'
     laty = sio.loadmat(latx)
     lony = sio.loadmat(lonx)
     AGRI_lat= laty['b_lat']
@@ -91,7 +88,7 @@ for k in range(len(a)):
     del(AGRI_lon)
 
     #------------------------------------Read AGRI L2 product CLM-----------------------------------
-    msk_file = 'D:/fydata/NMC/sea_train/CLM/FY4A-_AGRI--_N_DISK_1047E_L2-_CLM-_MULT_NOM_{}_4000M_V0001.NC'.format(CLM_NAME[k])
+    msk_file = 'CLM/FY4A-_AGRI--_N_DISK_1047E_L2-_CLM-_MULT_NOM_{}_4000M_V0001.NC'.format(CLM_NAME[k])
     mask=Dataset(msk_file)
     print('msk_file.variables:',mask.variables.keys())
     clm=mask.variables['CLM'][:]
