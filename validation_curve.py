@@ -20,37 +20,31 @@ from sklearn.utils import shuffle
 
 #----------------------train_data---------------
 #load train data
-train_path='D:/fydata/NMC/sea_train/data/'
-name1='sea_train_type1.txt'
-name2='sea_train_type2.txt'
-train_data=np.loadtxt(train_path+name2)
+train_path='train_data'
+data_name='data_name.txt'
+train_data=np.loadtxt(train_path+data_name)
 
-train_data=preprocessing.scale(train_data)
-
-x_train=train_data[:,4:]
-y_train=train_data[:,1]
-
-
+x_train=train_data[:,5:]
+y_train=train_data[:,2]
+x_train=preprocessing.scale(x_train)
+'''
 le=LabelEncoder()
-y_train=le.fit_transform(y_train)#类标整数化
-
+y_train=le.fit_transform(y_train)
+'''
 
 def plot_validation_curve(x,y):
-    model=LogisticRegression(random_state=1,penalty='l2',solver='lbfgs',max_iter=600)
+    model=LogisticRegression(random_state=1,penalty='l1',solver='liblinear')
     x_train,y_train=shuffle(x,y)
     print('shape of x_train.{}'.format(np.shape(x_train)))
-
     font1={'family':'serif','weight':'normal','size':'28'}
-
     font2 = {'family': 'Times New Roman',
              'weight': 'normal',
              'size': 35,
             }
     param_range=[0.001,0.01,0.1,1,10,100,1000]
-    #10折，验证正则化参数C
+
     C=[1,2,3,4,5,6,7]
-    train_scores,test_scores =validation_curve(estimator=model,X=x_train,y=y_train,param_name='C',param_range=param_range,cv=10,scoring='accuracy')
-    #统计结果
+    train_scores,test_scores =validation_curve(estimator=model,X=x_train,y=y_train,param_name='C',param_range=param_range,cv=5,scoring='accuracy')
     train_mean= np.mean(train_scores,axis=1)
     train_std = np.std(train_scores,axis=1)
     test_mean =np.mean(test_scores,axis=1)
@@ -60,7 +54,6 @@ def plot_validation_curve(x,y):
     plt.plot(C,test_mean,color='green',linestyle='--',marker='D',markersize=5,label='Test set')
     plt.fill_between(C,test_mean+test_std,test_mean-test_std,alpha=0.2,color='green')
 
-    #plt.xscale('log')
     plt.xlabel('Parameter C',font2)
     plt.ylabel('Auc',font2)
     plt.legend(loc='lower right',fontsize='large',prop=font1)
